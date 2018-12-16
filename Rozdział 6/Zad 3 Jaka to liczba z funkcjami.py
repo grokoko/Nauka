@@ -6,6 +6,7 @@
 # czy prawidłowa
 
 def instructions():
+    """ Wyswietla intrukcje"""
     print("\tWitaj w grze 'Jaka to liczba?'!")
     print("\nMam na myśli pewną liczbę od 1 do 100.")
     print("Masz 5 podejść.\n")   
@@ -18,6 +19,7 @@ def ask_number(question, low, high):
     return response
 
 def petla_while():
+    """Sprawdza czy podana liczba jest prawidłowa"""
     while guess != the_number:
         if tries <= 1:
             break
