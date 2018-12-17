@@ -34,10 +34,12 @@ def next_block(the_file):
     correct = next_line(the_file)
     if correct:
         correct = correct[0]
+
+    points = next_line(the_file)
         
     explanation = next_line(the_file) 
 
-    return category, question, answers, correct, explanation
+    return category, question, answers, correct, points, explanation
 
 def welcome(title):
     """Przywitaj gracza i pobierz jego nazwę."""
@@ -51,7 +53,7 @@ def main():
     score = 0
 
     # pobierz pierwszy blok
-    category, question, answers, correct, explanation = next_block(trivia_file)
+    category, question, answers, correct, points, explanation = next_block(trivia_file)
     while category:
         # zadaj pytanie
         print(category)
@@ -65,14 +67,14 @@ def main():
         # sprawdź odpowiedź
         if answer == correct:
             print("\nOdpowiedź prawidłowa!", end=" ")
-            score += 1
+            score += int(points)
         else:
             print("\nOdpowiedź niepoprawna.", end=" ")
         print(explanation)
         print("Wynik:", score, "\n\n")
 
         # pobierz kolejny blok
-        category, question, answers, correct, explanation = next_block(trivia_file)
+        category, question, answers, correct, points, explanation = next_block(trivia_file)
 
     trivia_file.close()
 
