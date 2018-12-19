@@ -1,0 +1,55 @@
+﻿Pliki i wyjątki
+Odczyt
+Która komenda sprawia, że Python odczyta cały plik na raz?
+readline()
+readlines()
+open()
+read()
+4
+5
+Odczytać cały plik można poprzez przypisanie nazwypliku.read() do zmiennej.
+Tryby dostępu do pliku tekstowego
+Który tryb dopisuje dane na końcu pliku tesktowego?
+"w"
+"a"
+"r"
+"a+"
+2
+5
+Tryb "a". Jeśli plik istnieje to dane zostaną dopisane. /Jeśli nie, to najpierw plik zostanie utworzony.
+Marynowanie
+Jaki moduł musisz zaimportować, by móc zamarynować dane?
+random
+pickle
+shelve
+sys
+2
+5
+Za pickling (marynowanie) odpowiada moduł pickle.
+Tryby dostępu do pliku binarnego.
+Który tryb pozwala na zapis i odczyt do (z) pliku binarnego?
+"wb"
+"ab"
+"wb+"
+"ab+"
+3
+5
+"wb+". Jeśli plik istnieje to jego zawartość zostanie zamieniona na nowe dane. /Jeśli nie istnieje, to najpierw zostanie utworzony.
+Moduł shelve
+Co robi tryb "n"?
+Otwiera plik do odczytu i zapisu
+Tworzy nowy plik do odczytu i zapisu
+Odczytuje dane z pliku
+Zapisuje dane do pliku.  
+2
+5
+Jeśli plik już istnieje, to jego zawartość zostaje nadpisana
+wyjątki
+Jaki wyjątek powinieneś obsłużyć w kodzie, jeśli nie jesteś pewien /czy program znajdzie wzkazany plik?
+KeyError
+NameError
+SyntaxError
+I0Error
+4
+5
+Typ wyjątku którego szukasz to I0Error
