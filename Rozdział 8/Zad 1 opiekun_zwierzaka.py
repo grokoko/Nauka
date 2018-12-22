@@ -29,15 +29,23 @@ class Critter(object):
         print("Nazywam się", self.name, "i jestem", self.mood, "teraz.\n")
         self.__pass_time()
     
-    def eat(self, food = 4):
-        print("Mniam, mniam.  Dziękuję.")
+    def eat(self, food):
+        if food < 1:
+            food = 1
+        elif food > 4:
+            food = 4
+        print("Mniam, mniam.  Dziękuję za", food, "jedzenia.")
         self.hunger -= food
         if self.hunger < 0:
             self.hunger = 0
         self.__pass_time()
 
-    def play(self, fun = 4):
-        print("Hura!")
+    def play(self, fun):
+        if fun  < 1:
+            fun = 1
+        elif fun > 4:
+            fun = 4
+        print("Hura! Dziękuje za wspólną zabawę przez", fun, "minuty")
         self.boredom -= fun
         if self.boredom < 0:
             self.boredom = 0
@@ -73,11 +81,13 @@ def main():
         
         # nakarm swojego zwierzaka
         elif choice == "2":
-            crit.eat()
+            food = int(input("Ile jedzenia chcesz podać zwierzakowi? (Od 1 do 4)"))
+            crit.eat(food)
          
         # pobaw się ze swoim zwierzakiem
         elif choice == "3":
-            crit.play()
+            fun = int(input("Jak długo chcesz się bawić ze zwierzakiem? (Od 1 do 4)"))
+            crit.play(fun)
 
         # nieznany wybór 
         else:
