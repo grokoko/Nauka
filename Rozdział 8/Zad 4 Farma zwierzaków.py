@@ -1,9 +1,10 @@
 # Opiekun zwierzaka
 # Wirtualny pupil, którym należy się opiekować
+import random
 
 class Critter(object):
     """Wirtualny pupil"""
-    def __init__(self, name, hunger = 0, boredom = 0):
+    def __init__(self, name, hunger, boredom):
         self.name = name
         self.hunger = hunger
         self.boredom = boredom
@@ -60,17 +61,25 @@ class Critter(object):
 def main():
     # Nadaj imiona zwierzakom
     crit_name = input("Jak chcesz nazwać swojego zwierzaka?: ")
-    crit = Critter(crit_name)
+    hunger = random.randint(1, 10)
+    boredom = random.randint(1, 10)
+    crit = Critter(crit_name, hunger, boredom)
+
     crit_name2 = input("Jak chcesz nazwać drugiego zwierzaka?: ")
-    crit2 = Critter(crit_name2)
+    hunger = random.randint(1, 10)
+    boredom = random.randint(1, 10)
+    crit2 = Critter(crit_name2, hunger, boredom)
+
     crit_name3 = input("Jak chcesz nazwać trzeciego zwierzaka?: ")
-    crit3 = Critter(crit_name3)
+    hunger = random.randint(1, 10)
+    boredom = random.randint(1, 10)
+    crit3 = Critter(crit_name3, hunger, boredom)
 
     choice = None  
     while choice != "0":
         print \
         ("""
-        Opiekun zwierzaka
+        Opiekun farmy zwierzaków
     
         0 - zakończ
         1 - słuchaj swoich zwierzaków
