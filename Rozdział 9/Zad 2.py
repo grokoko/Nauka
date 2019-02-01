@@ -3,20 +3,24 @@
 
 import kartydowojny, gry 
 
-class War_Card(kartydowojny.Card):
-    """ Karta do blackjacka. """
-
+class Card(kartydowojny.Card):
+    """ Karta do wojny. """
     @property
     def value(self):
-        if self.is_face_up:
-            v = War_Card.RANKS.index(self.rank) + 1
+        v = Card.RANKS.index(self.rank) + 1
         return v
 
-class War_Hand(kartydowojny.Hand):
-    """ Ręka w wojnie. """
+class Deck(kartydowojny.Deck):
+    """ Talia kart do wojny. """
+    def populate(self):
+        for suit in Card.SUITS: 
+            for rank in Card.RANKS: 
+                self.cards.append(Card(rank, suit))        
 
+class Hand(kartydowojny.Hand):
+    """ Ręka w wojnie. """
     def __init__(self, name):
-        super(War_Hand, self).__init__()
+        super(Hand, self).__init__()
         self.name = name
 
     @property     
@@ -29,31 +33,29 @@ class War_Hand(kartydowojny.Hand):
         # zsumuj wartości kart
         t = 0
         for card in self.cards:
-              t += card.value  
-                
+            t += card.value  
         return t
 
-class Player(kartydowojny.Hand):
+class Player(Hand):
     def lose(self):
-        print(self.name, "lose.")
+        print(self.name, "przegrał.")
 
     def win(self):
-        print(self.name, "win.")
+        print(self.name, "wygrał.")
 
 class Game(object):
     """ Gra w Wojnę. """
     def __init__(self, names):      
         self.players = []
         for name in names:
-            player = War_Hand(name)
+            player = Player(name)
             self.players.append(player)
 
-        self.deck = kartydowojny.Deck()
+        self.deck = Deck()
         self.deck.populate()
         self.deck.shuffle()
 
     def play(self):
-
         # rozdaj każdemu po karcie
         self.deck.deal(self.players, per_hand = 1)
         for player in self.players:
@@ -62,7 +64,7 @@ class Game(object):
         # porównaj karty    
         scores = []
         for player in self.players:
-            print(player, player.name, player.total)
+            print("Karta: ", player, "Imię gracza: ", player.name, "Punkty: ", player.total)
             scores.append([player.total, player.name])
 
         scores.sort(reverse = True)
