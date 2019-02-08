@@ -14,6 +14,7 @@ class Application(Frame):
         super(Application, self).__init__(master)
         self.grid()
         self.create_widgets()
+        self.the_number = random.randint(1, 100)
 
     def create_widgets(self):
         """ Utwórz widżety potrzebne do pobrania informacji podanych przez 
@@ -46,36 +47,26 @@ class Application(Frame):
         """Wpisz w pole tekstowe odpowiedzi dla użytkownika"""
         # Pobierz wartości z interfejsu GUI
         guess = self.digit.get()
-        guess1 = int(guess)
+        guess = int(guess)
 
         # ustaw wartości początkowe
-        the_number = random.randint(1, 100)
-        tries = 5
-        proby = 1
-        answer1 = "Wygrałeś, ta liczba to", the_number, "Potrzebowałeś", proby, "prób!"
+        self.tries = 5
+        self.proby = 1
+        answer1 = "Wygrałeś, ta liczba to", self.the_number, "Potrzebowałeś", self.proby, "prób!"
 
         # pętla zgadywania
-        while guess1 != the_number:
-            if tries <= 1:
-                break
-            elif guess1 > the_number:
-                self.answer.delete(0.0, END)
-                self.answer.insert(0.0, "Za duża...") 
-            else:
-                self.answer.delete(0.0, END)
-                self.answer.insert(0.0, "Za mała...")     
+        if guess == self.the_number:
+            self.answer.insert(0.0, "Brawo, zgadłeś!\n")
+        elif guess > self.the_number:
+            self.answer.insert(0.0, "Za duża...\n") 
+        else:
+            self.answer.insert(0.0, "Za mała...\n")     
 
             guess = self.digit.get()
-            guess1 = int(guess)
-            tries -= 1
-            proby += 1
+            guess = int(guess)
+            self.tries -= 1
+            self.proby += 1
 
-        if tries <= 1:
-            self.answer.delete(0.0, END)
-            self.answer.insert(0.0, "Przegrałeś, spróbuj jeszcze raz!") 
-        else:
-            self.answer.delete(0.0, END)
-            self.answer.insert(0.0, answer1)
       
         
 # Część główna
