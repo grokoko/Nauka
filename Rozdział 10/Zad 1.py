@@ -88,7 +88,7 @@ class Application(Frame):
         self.others.set(None)
 
         # Utwórz przyciski opcji dla innych
-        others = ["miecz", "koszula", "paszport Polsatu"]
+        others = ["miecz", "koszulę", "paszport Polsatu"]
         column = 1
         for other in others:
             Radiobutton(self,
@@ -103,7 +103,7 @@ class Application(Frame):
         text = "Czasownik: "
         ).grid(row = 7, column = 0, sticky = W)
         self.verb_ent = Entry(self)
-        self.verb_ent.grid(row = 6, column = 1, sticky = W)
+        self.verb_ent.grid(row = 7, column = 1, sticky = W)
 
         # Utwórz przycisk akceptacji danych
         Button(self,
@@ -136,6 +136,7 @@ class Application(Frame):
         story += adjective 
         story += " badacz i "
         story += occupation
+        story += " "
         story += person
         story += " o mało co nie zrezygnował z życiowej misji poszukiwania "
         story += "zaginionego miasta, które zamieszkiwały "
