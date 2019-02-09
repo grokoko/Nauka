@@ -14,7 +14,9 @@ class Application(Frame):
         super(Application, self).__init__(master)
         self.grid()
         self.create_widgets()
-        self.the_number = random.randint(1, 100)
+        self.the_number = random.randint(1, 100)      
+        self.tries = 5
+        self.proby = 1
 
     def create_widgets(self):
         """ Utwórz widżety potrzebne do pobrania informacji podanych przez 
@@ -40,34 +42,38 @@ class Application(Frame):
         command = self.check
         ).grid(row = 4, column = 0, sticky = W)
 
-        self.answer = Text(self, width = 50, height = 5, wrap = WORD)
-        self.answer.grid(row = 5, column = 0, columnspan = 2)  
+        self.answer = Text(self, width = 70, height = 5, wrap = WORD)
+        self.answer.grid(row = 5, column = 0, columnspan = 3)  
 
     def check(self):
         """Wpisz w pole tekstowe odpowiedzi dla użytkownika"""
         # Pobierz wartości z interfejsu GUI
-        guess = self.digit.get()
-        guess = int(guess)
-
-        # ustaw wartości początkowe
-        self.tries = 5
-        self.proby = 1
-        answer1 = "Wygrałeś, ta liczba to", self.the_number, "Potrzebowałeś", self.proby, "prób!"
+        
+        answer1 = "Wygrałeś, ta liczba to", self.the_number, "Potrzebowałeś", self.proby, "prób!\n"
 
         # pętla zgadywania
-        if guess == self.the_number:
-            self.answer.insert(0.0, "Brawo, zgadłeś!\n")
-        elif guess > self.the_number:
-            self.answer.insert(0.0, "Za duża...\n") 
-        else:
-            self.answer.insert(0.0, "Za mała...\n")     
-
+        try:
             guess = self.digit.get()
             guess = int(guess)
-            self.tries -= 1
-            self.proby += 1
-
-      
+            if guess < 1 or guess > 100:
+                self.answer.insert(0.0, "Podaj liczbę z przedziału 1 - 100!\n")
+            elif self.tries < 1:            
+                self.answer.insert(0.0, "Wykorzystałeś wszystkie próby\n")
+            else:
+                if guess == self.the_number:
+                    self.answer.insert(0.0, answer1)
+                    self.tries -= 1
+                    self.proby += 1
+                elif guess > self.the_number:
+                    self.answer.insert(0.0, "Za duża...\n") 
+                    self.tries -= 1
+                    self.proby += 1
+                else:
+                    self.answer.insert(0.0, "Za mała...\n")  
+                    self.tries -= 1
+                    self.proby += 1   
+        except ValueError:
+            self.answer.insert(0.0, "To nie jest liczba!\n")
         
 # Część główna
 root = Tk()
