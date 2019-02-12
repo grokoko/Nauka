@@ -6,7 +6,6 @@ import random
 
 games.init(screen_width = 640, screen_height = 480, fps = 50)
 
-
 class Pan(games.Sprite):
     """
     Patelnia sterowana przez gracza służąca do łapania spadających pizz.
@@ -41,8 +40,46 @@ class Pan(games.Sprite):
             self.score.value += 10
             self.score.right = games.screen.width - 10 
             pizza.handle_caught()
+            self.too_easy()
+            if self.score.value > 100 and self.score.value < 120:
+                fast = games.Message(value = "Przyśpieszamy...",
+                                    size = 90,
+                                    color = color.red,
+                                    x = games.screen.width/2,
+                                    y = games.screen.height/2,
+                                    lifetime = 2 * games.screen.fps)
+                games.screen.add(fast)
+            if self.score.value > 200 and self.score.value < 220:
+                faster = games.Message(value = "Szybciej !",
+                                    size = 90,
+                                    color = color.red,
+                                    x = games.screen.width/2,
+                                    y = games.screen.height/2,
+                                    lifetime = 2 * games.screen.fps)
+                games.screen.add(faster)
+            self.more_chefz()
 
+    def too_easy(self):
+        if self.score.value > 9:
+            Pizza.harder(self)
+            Chef.haarder(self)
+        if self.score.value >= 100:
+            Pizza.harder2(self)
+        if self.score.value > 200:
+            Pizza.harder3(self)
 
+    def more_chefz(self):
+        if self.score.value >= 300 and self.score.value < 301:
+            the_chef2 = Chef()
+            games.screen.add(the_chef2)
+            doubling = games.Message(value = "Podwajamy :)",
+                                    size = 90,
+                                    color = color.red,
+                                    x = games.screen.width/2,
+                                    y = games.screen.height/2,
+                                    lifetime = 2 * games.screen.fps)
+            games.screen.add(doubling)
+  
 class Pizza(games.Sprite):
     """
     Pizza, która spada na ziemię.
@@ -77,19 +114,32 @@ class Pizza(games.Sprite):
                                     after_death = games.screen.quit)
         games.screen.add(end_message)
 
+    def harder(self):
+        """ Zwiększ poziom trudności """
+        Pizza.speed = 2
+
+    def harder2(self):
+        """ Zwiększ poziom trudności """
+        Pizza.speed = 3
+        
+
+    def harder3(self):
+        """ Zwiększ poziom trudności """
+        Pizza.speed = 4
 
 class Chef(games.Sprite):
     """
     Szef kuchni, który porusza się w lewo i w prawo, zrzucając pizze.
     """
     image = games.load_image("kucharz.bmp")
+    speed = 2
 
-    def __init__(self, y = 55, speed = 2, odds_change = 200):
+    def __init__(self, y = 55, odds_change = 200):
         """ Initialize the Chef object. """
         super(Chef, self).__init__(image = Chef.image,
                                    x = games.screen.width / 2,
                                    y = y,
-                                   dx = speed)
+                                   dx = Chef.speed)
         
         self.odds_change = odds_change
         self.time_til_drop = 0
@@ -103,7 +153,6 @@ class Chef(games.Sprite):
                 
         self.check_drop()
 
-
     def check_drop(self):
         """ Zmniejsz licznik odliczający czas lub zrzuć pizzę i zresetuj odliczanie. """
         if self.time_til_drop > 0:
@@ -113,8 +162,11 @@ class Chef(games.Sprite):
             games.screen.add(new_pizza)
 
             # ustaw margines na mniej więcej 30% wysokości pizzy, niezależnie od prędkości pizzy   
-            self.time_til_drop = int(new_pizza.height * 1.3 / Pizza.speed) + 1      
+            self.time_til_drop = int(new_pizza.height * 2 / Pizza.speed) + 2  
 
+    def haarder(self):
+        """ Zwiększa prędkość poruszania się kucharza """
+        Chef.speed = 6 
 
 def main():
     """ Uruchom grę. """
@@ -123,6 +175,8 @@ def main():
 
     the_chef = Chef()
     games.screen.add(the_chef)
+
+
 
     the_pan = Pan()
     games.screen.add(the_pan)
