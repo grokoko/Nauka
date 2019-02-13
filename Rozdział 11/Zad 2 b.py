@@ -1,8 +1,6 @@
-# Kryj się !
-# Gracz musi uciekać przed spadającymi kamieniami
-
 from superwires import games, color
 import random
+
 games.init(screen_width = 640, screen_height = 480, fps = 50)
 
 class Player(games.Sprite):
@@ -23,7 +21,6 @@ class Player(games.Sprite):
             self.left = 0
         if self.right > games.screen.width:
             self.right = games.screen.width
-        
         self.collision()
 
     def destroy(self):
@@ -34,23 +31,17 @@ class Player(games.Sprite):
         for stone in self.overlapping_sprites:
             stone.handle_hit()
 
-    def handle_hit(self):
-        """ Zniszcz gracza jeśli został trafiony """
-        self.destroy()
-        Stone.end_game(self)
-
 
 class Stone(games.Sprite):
     """ Kamień który spada na ziemię """
 
     image = games.load_image("kamien.bmp")
-    speed = 1
-    
-    def __init__(self, x = 200, y = 0):
+    speed = 2
+
+    def __init__(self, x = random.randrange(0, games.screen.width), y = 0):
         super(Stone, self).__init__(image = Stone.image,
                                     x = x, y = y, dy = Stone.speed)
-
-        self.time_till_drop = 0
+        self.time_til_drop = 20
 
     def update(self):
         self.check_fall()
@@ -62,8 +53,18 @@ class Stone(games.Sprite):
         if self.bottom > games.screen.height:
             self.destroy()
 
+    def check_drop(self):
+        """ Zrzut kamieni """
+        if self.time_til_drop > 0:
+            self.time_til_drop -= 1
+        else:
+            new_stone = Stone(x = random.randrange(0, games.screen.width))
+            games.screen.add(new_stone)
 
+            # ustaw margines na mniej więcej 30% wysokości kamienia, niezależnie od prędkości   
+            self.time_til_drop = int(new_stone.height * 50 / self.speed) + 50     
 
+            
     def end_game(self):
         """ Zakończ grę. """
         end_message = games.Message(value = "Koniec gry",
@@ -73,19 +74,14 @@ class Stone(games.Sprite):
                                     y = games.screen.height/2,
                                     lifetime = 5 * games.screen.fps,
                                     after_death = games.screen.quit)
-        games.screen.add(end_message)    
-    
-    def check_drop(self):
-        """ Zrzut kamieni """
-        if self.time_till_drop > 0:
-            self.time_till_drop -= 1
-        else:
-            new_stone = Stone(x = self.x)
-            games.screen.add(new_stone)
+        games.screen.add(end_message)      
 
-            # ustaw margines na mniej więcej 30% wysokości kamienia, niezależnie od prędkości   
-            self.time_til_drop = int(new_stone.height * 2 / Stone.speed) + 2  
-
+    def handle_hit(self):
+        """ Zniszcz gracza jeśli został trafiony """   
+        Player.destroy(self)     
+        self.end_game()
+   
+ 
 def main():
     """ Uruchom grę """
     wall_image = games.load_image("sciana.jpg", transparent = False)
@@ -97,7 +93,7 @@ def main():
     new_stone = Stone()
     games.screen.add(new_stone)
 
-    games.mouse.is_visible - False
+    games.mouse.is_visible = False
 
     games.screen.event_grab = True
     games.screen.mainloop()
