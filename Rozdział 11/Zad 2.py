@@ -40,7 +40,7 @@ class Stone(games.Sprite):
     """ Kamień który spada na ziemię """
 
     image = games.load_image("kamien.jpg")
-    speed = 1
+    speed = 2
 
     def __init__(self, x = random.randrange(0, games.screen.width), y = 0):
         super(Stone, self).__init__(image = Stone.image,
@@ -89,7 +89,7 @@ class Stone(games.Sprite):
             games.screen.add(new_stone)
 
             # ustaw margines na mniej więcej 30% wysokości kamienia, niezależnie od prędkości   
-            self.time_till_drop = int(new_stone.height * 1.3 / Stone.speed) + 1  
+            self.time_till_drop = int(new_stone.height * 50 / Stone.speed) + 50  
 
 def main():
     """ Uruchom grę """
