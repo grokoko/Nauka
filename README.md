@@ -1,2 +1,2 @@
 # Nauka
-Rozwiązania zadań z pozycji Michael Dawson "Python dla każdego"
+Rozwiązania zadań z podręcznika Michaela Dawsona "Python dla każdego"
