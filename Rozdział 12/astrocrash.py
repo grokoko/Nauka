@@ -100,12 +100,11 @@ class Asteroid(Wrapper):
 class Pizza(Wrapper):
     """ Pizza jako dodatkowy obiekt utrudniający rozgrywkę """
     SPEED = 2
-    total = 0
+    hp = 3
 
     placek = games.load_image("pizza.bmp")
 
     def __init__(self, game, x, y):
-        Pizza.total += 1
 
         super(Pizza, self).__init__(
             image = Pizza.placek,
@@ -116,12 +115,12 @@ class Pizza(Wrapper):
         self.game = game
 
     def die(self):
-        Pizza.total -= 1
+        Pizza.hp -= 1
+        if Pizza.hp < 1:
+            self.game.score.value += 20
+            self.game.score.right = games.screen.width - 10   
 
-        self.game.score.value += 20
-        self.game.score.right = games.screen.width - 10   
-
-        super(Pizza, self).die()
+            super(Pizza, self).die()
 
 
 class Ship(Collider):
