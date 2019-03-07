@@ -97,6 +97,33 @@ class Asteroid(Wrapper):
         super(Asteroid, self).die()
 
 
+class Pizza(Wrapper):
+    """ Pizza jako dodatkowy obiekt utrudniający rozgrywkę """
+    SPEED = 2
+    total = 0
+
+    placek = games.load_image("pizza.bmp")
+
+    def __init__(self, game, x, y):
+        Pizza.total += 1
+
+        super(Pizza, self).__init__(
+            image = Pizza.placek,
+            x = x, y = y,
+            dx = random.choice([1, -1]) * Pizza.SPEED,
+            dy = random.choice([1, -1]) * Pizza.SPEED)
+
+        self.game = game
+
+    def die(self):
+        Pizza.total -= 1
+
+        self.game.score.value += 20
+        self.game.score.right = games.screen.width - 10   
+
+        super(Pizza, self).die()
+
+
 class Ship(Collider):
     """ Statek kosmiczny gracza. """
     image = games.load_image("statek.bmp")
@@ -288,6 +315,11 @@ class Game(object):
                                     x = x, y = y,
                                     size = Asteroid.LARGE)
             games.screen.add(new_asteroid)
+
+            # utwórz pizze
+            new_pizza = Pizza(game = self,
+                                    x = x, y = y)
+        games.screen.add(new_pizza)
 
         # wyświetl numer poziomu
         level_message = games.Message(value = "Poziom " + str(self.level),
