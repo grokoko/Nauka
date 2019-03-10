@@ -39,6 +39,11 @@ class Ship(games.Sprite):
     image = games.load_image("statek.bmp")
     sound = games.load_sound("przyspieszenie.wav")
     VELOCITY = 0.2
+    MISSILE_DELAY = 25
+
+    def __init__(self, x, y):
+        super(Ship, self).__init__(image = Ship.image, x = x, y = y)
+        self.missile_wait = 0
 
     def update(self): 
         if games.keyboard.is_pressed(games.K_LEFT):
@@ -53,39 +58,39 @@ class Ship(games.Sprite):
         if self.right > games.screen.width:
             self.right = games.screen.width
 
-        if games.keyboard.is_pressed(games.K_SPACE):
+        if self.missile_wait > 0:
+            self.missile_wait -= 1
+
+        if games.keyboard.is_pressed(games.K_SPACE) and self.missile_wait == 0:
             new_missile = Missile(self.x, self.y)
             games.screen.add(new_missile)
+            self.missile_wait = Ship.MISSILE_DELAY
 
 class Missile(games.Sprite):
     image = games.load_image("pocisk.bmp")
     sound = games.load_sound("pocisk.wav")
     BUFFER = 40
     LIFETIME = 100
-    MIS_VELOCITY = 0.1
+    VELOCITY = 2
 
     def __init__(self, ship_x, ship_y):
         Missile.sound.play()
 
-        buffer_x = Missile.BUFFER
         buffer_y = Missile.BUFFER
 
-        x = ship_x + buffer_x
-        y = ship_y + buffer_y
-
-        dy = Missile.MIS_VELOCITY
+        x = ship_x
+        y = ship_y - buffer_y
+        dx = 0
+        dy = -Missile.VELOCITY
 
         super(Missile, self).__init__(image = Missile.image,
                                         x = x, y = y,
-                                        dy = dy)
+                                        dx = dx, dy = dy)
         self.lifetime = Missile.LIFETIME
 
     def update(self):
         self.lifetime -= 1
         if self.lifetime == 0:
-            self.destroy()
-
-        if self.top > 0:
             self.destroy()
 
         
@@ -99,8 +104,7 @@ def main():
         new_chef = Kucharz(x = x, y = y)
         games.screen.add(new_chef)
 
-    the_ship = Ship(image = Ship.image,
-                    x = games.screen.width/2,
+    the_ship = Ship(x = games.screen.width/2,
                     y = games.screen.height - 15)
     games.screen.add(the_ship)
         
