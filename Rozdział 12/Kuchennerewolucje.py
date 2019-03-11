@@ -6,18 +6,36 @@ from superwires import games, color
 
 games.init(screen_width = 640, screen_height = 480 , fps = 50)
 
-class Kucharz(games.Sprite):
+class Collider(games.Sprite):
+    def update(self):      
+        if self.overlapping_sprites:
+            for sprite in self.overlapping_sprites:
+                sprite.die()
+            self.die()               
+
+    def die(self):
+        """ Zniszcz się i pozostaw po sobie eksplozję. """
+        new_explosion = Explosion(x = self.x, y = self.y)
+        games.screen.add(new_explosion)
+        self.destroy()    
+
+class Kucharz(Collider):
     """ Kosmiczny Kucharz, którego trzeba zniszczyć """
     image = games.load_image("Kucharz.bmp")
 
-    speed = 0.1
+    speed = 1
+    total = 0
+    POINTS = 10
 
-    def __init__(self, x, y):
+    def __init__(self, game, x, y):
+        Kucharz.total += 1
         super(Kucharz, self).__init__(
             image = Kucharz.image,
             x = x, y = y,
             dx = 0,
             dy = Kucharz.speed)
+
+        self.game = game
 
     def update(self):
         if self.bottom > games.screen.height:
@@ -33,25 +51,41 @@ class Kucharz(games.Sprite):
                                     y = games.screen.height/2,
                                     lifetime = 5 * games.screen.fps,
                                     after_death = games.screen.quit)
-        games.screen.add(end_message)    
+        games.screen.add(end_message)
 
-class Ship(games.Sprite):
+    def die(self):
+        Kucharz.total -= 1
+        self.game.score.value += int(Kucharz.POINTS)
+        self.game.score.right = games.screen.width - 10  
+
+        if Kucharz.total == 0:
+            self.game.advance()
+
+        super(Kucharz, self).die()
+
+class Ship(Collider):
     image = games.load_image("statek.bmp")
     sound = games.load_sound("przyspieszenie.wav")
-    VELOCITY = 0.2
+    VELOCITY = 5
     MISSILE_DELAY = 25
 
-    def __init__(self, x, y):
+    def __init__(self, game, x, y):
         super(Ship, self).__init__(image = Ship.image, x = x, y = y)
         self.missile_wait = 0
+        self.game = game
 
-    def update(self): 
+    def update(self):
+        super(Ship, self).update()
         if games.keyboard.is_pressed(games.K_LEFT):
             Ship.sound.play()
             self.dx -= Ship.VELOCITY
+            if self.dx < -Ship.VELOCITY:
+                self.dx = -Ship.VELOCITY
         if games.keyboard.is_pressed(games.K_RIGHT):
             Ship.sound.play()
             self.dx += Ship.VELOCITY
+            if self.dx > Ship.VELOCITY:
+                self.dx = Ship.VELOCITY
 
         if self.left < 0:
             self.left = 0
@@ -66,12 +100,16 @@ class Ship(games.Sprite):
             games.screen.add(new_missile)
             self.missile_wait = Ship.MISSILE_DELAY
 
-class Missile(games.Sprite):
+    def die(self):
+        self.game.end()
+        super(Ship, self).die()
+
+class Missile(Collider):
     image = games.load_image("pocisk.bmp")
     sound = games.load_sound("pocisk.wav")
     BUFFER = 40
     LIFETIME = 100
-    VELOCITY = 2
+    VELOCITY = 3
 
     def __init__(self, ship_x, ship_y):
         Missile.sound.play()
@@ -89,26 +127,95 @@ class Missile(games.Sprite):
         self.lifetime = Missile.LIFETIME
 
     def update(self):
+        super(Missile, self).update()
         self.lifetime -= 1
         if self.lifetime == 0:
             self.destroy()
 
-        
+class Explosion(games.Animation):
+    sound = games.load_sound("eksplozja.wav")
+    images = ["eksplozja1.bmp",
+              "eksplozja2.bmp",
+              "eksplozja3.bmp",
+              "eksplozja4.bmp",
+              "eksplozja5.bmp",
+              "eksplozja6.bmp",
+              "eksplozja7.bmp",
+              "eksplozja8.bmp",
+              "eksplozja9.bmp"]
+
+    def __init__(self, x, y):
+        super(Explosion, self).__init__(images = Explosion.images,
+                                        x = x, y = y,
+                                        repeat_interval = 4, n_repeats = 1,
+                                        is_collideable = False)
+        Explosion.sound.play()
+
+class Game(object):
+    def __init__(self):
+        self.level = 0
+        self.sound = games.load_sound("poziom.wav")
+
+        self.score = games.Text(value = 0,
+                                size = 30,
+                                color = color.white,
+                                top = 5,
+                                right = games.screen.width - 10,
+                                is_collideable = False)
+        games.screen.add(self.score)
+
+        self.ship = Ship(game = self, 
+                        x = games.screen.width/2,
+                        y = games.screen.height - 15)
+        games.screen.add(self.ship)
+
+    def play(self):
+        games.music.load("temat.mid")
+        games.music.play(-1)
+
+        nebula_image = games.load_image("mglawica.jpg")
+        games.screen.background = nebula_image
+
+        self.advance()
+        games.screen.mainloop()
+
+    def advance(self):
+        self.level += 1
+
+        for i in range(10):
+            x = random.randrange(games.screen.width)
+            y = 1
+            new_chef = Kucharz(game = self, x = x, y = y)
+            games.screen.add(new_chef)
+
+        level_message = games.Message(value = "Poziom " + str(self.level),
+                                      size = 40,
+                                      color = color.yellow,
+                                      x = games.screen.width/2,
+                                      y = games.screen.width/10,
+                                      lifetime = 3 * games.screen.fps,
+                                      is_collideable = False)
+        games.screen.add(level_message)
+
+        if self.level > 1:
+            self.sound.play()
+
+    def end(self):
+        """ Zakończ grę. """
+        # pokazuj komunikat 'Koniec gry' przez 5 sekund
+        end_message = games.Message(value = "Koniec gry",
+                                    size = 90,
+                                    color = color.red,
+                                    x = games.screen.width/2,
+                                    y = games.screen.height/2,
+                                    lifetime = 5 * games.screen.fps,
+                                    after_death = games.screen.quit,
+                                    is_collideable = False)
+        games.screen.add(end_message)
+
+
 def main():
-    nebula_image = games.load_image("mglawica.jpg")
-    games.screen.background = nebula_image
-
-    for i in range(10):
-        x = random.randrange(games.screen.width)
-        y = 1
-        new_chef = Kucharz(x = x, y = y)
-        games.screen.add(new_chef)
-
-    the_ship = Ship(x = games.screen.width/2,
-                    y = games.screen.height - 15)
-    games.screen.add(the_ship)
-        
-
-    games.screen.mainloop()
+    kuchenne_rewolucje = Game()
+    kuchenne_rewolucje.play()
 
 main()
