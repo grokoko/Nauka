@@ -60,6 +60,7 @@ class Kucharz(Collider):
 
         if Kucharz.total == 0:
             self.game.advance()
+            Kucharz.speed += 0.5
 
         super(Kucharz, self).die()
 
@@ -182,7 +183,7 @@ class Game(object):
     def advance(self):
         self.level += 1
 
-        for i in range(10):
+        for i in range(8):
             x = random.randrange(games.screen.width)
             y = 1
             new_chef = Kucharz(game = self, x = x, y = y)
