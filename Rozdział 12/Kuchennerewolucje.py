@@ -7,6 +7,7 @@ from superwires import games, color
 games.init(screen_width = 640, screen_height = 480 , fps = 50)
 
 class Collider(games.Sprite):
+    """ Obsługa zderzeń """ 
     def update(self):      
         if self.overlapping_sprites:
             for sprite in self.overlapping_sprites:
@@ -14,7 +15,6 @@ class Collider(games.Sprite):
             self.die()               
 
     def die(self):
-        """ Zniszcz się i pozostaw po sobie eksplozję. """
         new_explosion = Explosion(x = self.x, y = self.y)
         games.screen.add(new_explosion)
         self.destroy()    
@@ -43,7 +43,6 @@ class Kucharz(Collider):
             self.destroy()   
 
     def end_game(self):
-        """ Zakończ grę. """
         end_message = games.Message(value = "Koniec gry",
                                     size = 90,
                                     color = color.red,
@@ -202,8 +201,6 @@ class Game(object):
             self.sound.play()
 
     def end(self):
-        """ Zakończ grę. """
-        # pokazuj komunikat 'Koniec gry' przez 5 sekund
         end_message = games.Message(value = "Koniec gry",
                                     size = 90,
                                     color = color.red,
